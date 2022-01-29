@@ -16,7 +16,8 @@ class Categoriecontoller extends Controller
      */
     public function index()//avec get
     {
-        //
+        $list=Category::all();
+        return response()->json($list);
     }
 
     /**
