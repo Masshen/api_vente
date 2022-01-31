@@ -29,8 +29,8 @@ class Categoriecontoller extends Controller
     public function store(Request $request) //avec post
     {
         $validataire= Validator::make($request->all(),[
-'name'=>'required',
-'logo'=>'required|unique:Categories'
+           'name'=>'required',
+           'logo'=>'required|unique:Categories'
         ]);
             if($validataire->fails()){
             return response()->json($validataire->getMessageBag(),422);

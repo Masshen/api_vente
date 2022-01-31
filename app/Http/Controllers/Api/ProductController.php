@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\product;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -16,7 +17,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $list=product::all();
+        return response()->json($list);
     }
 
     /**
@@ -32,7 +34,7 @@ class ProductController extends Controller
             'category'=>'required|exists:categories,id',//vérifier que cet id de catégories existe dans la table catégorie
             'logo'=>'image',
             'price'=>'required|numeric',
-            'devise'=>'required',
+            'device'=>[Rule::in(['$','Fc'])]
         ]);
            if($validation->fails()){
             return response()->json($validation->getMessageBag(),422);// fails verifier s'il ya echec
@@ -41,7 +43,7 @@ class ProductController extends Controller
         $model->name=$request->name;
         $model->category_id=$request->category;
         $model->price=$request->price;
-        $model->devise=$request->devise;
+        $model->device=$request->device;
         $model->save();// methode pour enregistrer
         return response()->json($model);
     }
@@ -54,7 +56,11 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        $model=product::find($id);
+        if($model==null){
+            return response()->json(["L'id ne correspond à aucune information"],404);// fails verifier s'il ya echec
+        }
+        return response()->json($model);
     }
 
     /**
@@ -66,7 +72,31 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data=array();
+        $model=new product();
+        $fillable=$model->getFillable();//récupérer les champs modifiables
+        $requests=$request->all();//récupérer tous les champs envoyés
+        foreach ($requests as $key => $value) {
+            if(in_array($key,$fillable)){
+                $data[$key]=$value;
+            }
+        }
+        $validation=Validator::make($data,[
+            'name'=>'min:5',
+            'category'=>'exists:categories,id',//vérifier que cet id de catégories existe dans la table catégorie
+            'logo'=>'image',
+            'price'=>'required',
+            'devise'=>[Rule::in(['$','Fc'])]//rule definie la regle
+        ]);
+        if($validation->fails()){
+            return response()->json($validation->getMessageBag(),422);// fails verifier s'il ya echec
+        }
+        $model=product::find($id);
+        if($model==null){
+            return response()->json(["L'id ne correspond à aucune information"],404);// fails verifier s'il ya echec
+        }
+        $model->update($data);
+        return response()->json($model);
     }
 
     /**
@@ -77,6 +107,11 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $model=product::find($id);
+        if($model==null){
+            return response()->json(["L'id ne correspond à aucune information"],404);// fails verifier s'il ya echec
+        }
+        $model->delete();
+        return response()->json($model);
     }
 }
