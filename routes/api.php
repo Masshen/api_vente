@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Categoriecontoller;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\Stockcontroller;
 use App\Http\Controllers\Api\Usercontroller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,3 +24,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource('users',Usercontroller::class);
 Route::apiResource('categories',Categoriecontoller::class);
 Route::apiResource('produts',ProductController::class);
+Route::apiResource('stocks',Stockcontroller::class);
