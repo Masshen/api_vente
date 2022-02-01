@@ -9,6 +9,6 @@ class stock extends Model
 {
     use HasFactory;
     protected $fillable = [
-       'quantite'
+       'quantity'
     ];
 }

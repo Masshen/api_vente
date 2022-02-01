@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\Cartcontroller;
 use App\Http\Controllers\Api\Categoriecontoller;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\Salecontroller;
 use App\Http\Controllers\Api\Stockcontroller;
 use App\Http\Controllers\Api\Usercontroller;
 use Illuminate\Http\Request;
@@ -25,3 +27,5 @@ Route::apiResource('users',Usercontroller::class);
 Route::apiResource('categories',Categoriecontoller::class);
 Route::apiResource('produts',ProductController::class);
 Route::apiResource('stocks',Stockcontroller::class);
+Route::apiResource('sales',Salecontroller::class);
+Route::apiResource('carts',Cartcontroller::class);

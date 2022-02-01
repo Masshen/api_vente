@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\stock;
+use App\Models\cart;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
-class Stockcontroller extends Controller
+class Cartcontroller extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,7 +17,7 @@ class Stockcontroller extends Controller
      */
     public function index()
     {
-        $list = stock::all();
+        $list = cart::all();
         return response()->json($list);
     }
 
@@ -29,20 +29,26 @@ class Stockcontroller extends Controller
      */
     public function store(Request $request)
     {
-        $validation=Validator::make($request->all(),[
-            'quantite'=>'required|numeric',
-            'id_user'=>'required|exists:users,id',
-            'id_produit'=>'required|exists:products,id'
+        $validation = Validator::make($request->all(),[
+           'quantite'=>'required|numeric',
+           'prix'=>'required|numeric',
+           'devise'=>['required',Rule::in(['$','Fc'])],//rule definie la regle
+           'id_produit'=>'required|exists:products,id',
+           'id_vente'=>'required|exists:sales,id'
         ]);
         if($validation->fails()){
-            return response()->json($validation->getMessageBag(),422);// fails verifier s'il ya echec
+            return response()->json($validation->getMessageBag(),422);
         }
-        $model = new stock();
-        $model->quantity=$request->quantite;
-        $model->user_id=$request->id_user;
-        $model->product_id=$request->id_produit;
+
+        $model = new cart();
+        $model->quantity = $request->quantite;
+        $model->price = $request->prix;
+        $model->device = $request->devise;
+        $model->product_id = $request->id_produit;
+        $model->sale_id = $request->id_vente;
         $model->save();
         return response()->json($model);
+
     }
 
     /**
@@ -53,11 +59,12 @@ class Stockcontroller extends Controller
      */
     public function show($id)
     {
-        $model = stock::find($id);
+        $model = cart::find($id);
         if($model==null){
-            return response()->json(["l'information de l'id introduite n'est pas coorrect"],404);
+            return response()->json(["l'information introduite n'est pas conforme"],404);
         }
-        return response()->json($model);
+          return response()->json($model);
+
     }
 
     /**
@@ -70,7 +77,7 @@ class Stockcontroller extends Controller
     public function update(Request $request, $id)
     {
         $data=array();
-        $model=new stock();
+        $model=new cart();
         $fillable=$model->getFillable();//récupérer les champs modifiables
         $requests=$request->all();//récupérer tous les champs envoyés
         foreach ($requests as $key => $value) {
@@ -79,13 +86,16 @@ class Stockcontroller extends Controller
             }
         }
         $validation=Validator::make($data,[
-            'quantite'=>'numeric',
-
+           'quantite'=>'numeric',
+           'prix'=>'numeric',
+           'devise'=>[Rule::in(['$','Fc'])],//rule definie la regle
+           'id_produit'=>'exists:products,id',
+           'id_vente'=>'exists:sales,id'
         ]);
         if($validation->fails()){
             return response()->json($validation->getMessageBag(),422);// fails verifier s'il ya echec
         }
-        $model=stock::find($id);
+        $model=cart::find($id);
         if($model==null){
             return response()->json(["L'id ne correspond à aucune information"],404);// fails verifier s'il ya echec
         }
@@ -101,11 +111,11 @@ class Stockcontroller extends Controller
      */
     public function destroy($id)
     {
-        $model =stock::find($id);
-       if($model==null){
-           return response()->json(["L'id ne coorespond a aucune information",404]);
-       }
-       $model->delete();
-       return response()->json($model);
+        $model = cart::find($id);
+        if($model==null){
+            return response()->json(["l'information introduite n'est pas correcte"],404);
+        }
+        $model->delete();
+        return response()->json($model);
     }
 }
