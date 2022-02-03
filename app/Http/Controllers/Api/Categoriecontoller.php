@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class Categoriecontoller extends Controller
 {
@@ -30,14 +31,24 @@ class Categoriecontoller extends Controller
     {
         $validataire= Validator::make($request->all(),[
            'name'=>'required',
-           'logo'=>'required|unique:Categories'
+           'logo'=>'required|image'//s'assurer que logo soit une image
         ]);
-            if($validataire->fails()){
+        if($validataire->fails()){
             return response()->json($validataire->getMessageBag(),422);
-            }
+        }
         $model= new Category();
         $model->name=$request->name;
-        $model->logo=$request->logo;
+        $logo=null;
+        $image=$request->file('logo');//appeler logo comme un fichier
+        if($image!=null){
+            if($image->isFile()){//vérifier que nousa vos affaire à un fichier
+                $extension=$image->extension();//obtenier l'extension (.jpg, .png, etc)
+                $key=Str::random(60);//créer un texte au hasard
+                $name='logo_'.$key.'.'.$extension;
+                $logo=$image->storeAs('logo',$name,'public');//enregistrer dans le disk public, dans le dossier logo, un fichier avec le nom $name
+            }
+        }
+        $model->logo=$logo;
         $model->save();
         return response()->json($model);
 
