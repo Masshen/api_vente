@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\product;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
@@ -32,7 +33,7 @@ class ProductController extends Controller
         $validation=Validator::make($request->all(),[
             'name'=>'required|unique:products,name',
             'category'=>'required|exists:categories,id',//vérifier que cet id de catégories existe dans la table catégorie
-            'logo'=>'image',
+            'logo'=>'required|image',
             'price'=>'required|numeric',
             'device'=>[Rule::in(['$','Fc'])]
         ]);
@@ -44,6 +45,17 @@ class ProductController extends Controller
         $model->category_id=$request->category;
         $model->price=$request->price;
         $model->device=$request->device;
+        $logo=null;
+        $image=$request->file('logo');//appeler logo comme un fichier
+        if($image!=null){
+            if($image->isFile()){//vérifier que nousa vos affaire à un fichier
+                $extension=$image->extension();//obtenier l'extension (.jpg, .png, etc)
+                $key=Str::random(60);//créer un texte au hasard
+                $name='logo_'.$key.'.'.$extension;
+                $logo=$image->storeAs('Logoproduit',$name,'public');//enregistrer dans le disk public, dans le dossier logo, un fichier avec le nom $name
+            }
+        }
+        $model->logo=$logo;
         $model->save();// methode pour enregistrer
         return response()->json($model);
     }
