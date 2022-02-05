@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Bootstrap\HandleExceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -37,5 +39,15 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request,Throwable $e){
+        if($e instanceof HandleExceptions){
+            return response()->json($e->getMessage(),406);
+        }
+        if($e instanceof QueryException){
+            return response()->json($e->getMessage(),406);
+        }
+        return response()->json("not found",406);
     }
 }

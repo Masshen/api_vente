@@ -47,7 +47,7 @@ class ProductController extends Controller
         $model->name=$request->name;
         $model->category_id=$request->category;
         $model->price=$request->price;
-        $model->device=$request->device;
+        $model->devise=$request->device;
         $logo=null;
         if($request->logo!=null){
             $image=$request->file('logo');//appeler logo comme un fichier
