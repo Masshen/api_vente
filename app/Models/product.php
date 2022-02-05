@@ -13,4 +13,8 @@ class product extends Model
         'price',
         'devise'
     ];
+
+    public function category(){
+        return $this->belongsTo(Category::class);//appelle son contenant
+    }
 }

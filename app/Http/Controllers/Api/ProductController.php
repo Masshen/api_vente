@@ -19,6 +19,9 @@ class ProductController extends Controller
     public function index()
     {
         $list=product::all();
+        foreach ($list as $value) {
+            $value->category;
+        }
         return response()->json($list);
     }
 
@@ -33,7 +36,7 @@ class ProductController extends Controller
         $validation=Validator::make($request->all(),[
             'name'=>'required|unique:products,name',
             'category'=>'required|exists:categories,id',//vérifier que cet id de catégories existe dans la table catégorie
-            'logo'=>'required|image',
+            'logo'=>'image',
             'price'=>'required|numeric',
             'device'=>[Rule::in(['$','Fc'])]
         ]);
@@ -46,13 +49,15 @@ class ProductController extends Controller
         $model->price=$request->price;
         $model->device=$request->device;
         $logo=null;
-        $image=$request->file('logo');//appeler logo comme un fichier
-        if($image!=null){
-            if($image->isFile()){//vérifier que nousa vos affaire à un fichier
-                $extension=$image->extension();//obtenier l'extension (.jpg, .png, etc)
-                $key=Str::random(60);//créer un texte au hasard
-                $name='logo_'.$key.'.'.$extension;
-                $logo=$image->storeAs('Logoproduit',$name,'public');//enregistrer dans le disk public, dans le dossier logo, un fichier avec le nom $name
+        if($request->logo!=null){
+            $image=$request->file('logo');//appeler logo comme un fichier
+            if($image!=null){
+                if($image->isFile()){//vérifier que nousa vos affaire à un fichier
+                    $extension=$image->extension();//obtenier l'extension (.jpg, .png, etc)
+                    $key=Str::random(60);//créer un texte au hasard
+                    $name='logo_'.$key.'.'.$extension;
+                    $logo=$image->storeAs('Logoproduit',$name,'public');//enregistrer dans le disk public, dans le dossier logo, un fichier avec le nom $name
+                }
             }
         }
         $model->logo=$logo;
@@ -72,6 +77,7 @@ class ProductController extends Controller
         if($model==null){
             return response()->json(["L'id ne correspond à aucune information"],404);// fails verifier s'il ya echec
         }
+        $model->category;
         return response()->json($model);
     }
 

@@ -63,7 +63,8 @@ class Cartcontroller extends Controller
         if($model==null){
             return response()->json(["l'information introduite n'est pas conforme"],404);
         }
-          return response()->json($model);
+        $model->product;
+        return response()->json($model);
 
     }
 

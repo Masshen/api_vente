@@ -44,6 +44,12 @@ class Salecontroller extends Controller
         if($model == null){
             return response()->json(["l'information de l'id ne correspond pas"],404);
         }
+        $list=$model->carts;
+        $sum=0;
+        foreach($list as $item){
+            $sum+=$item->price;
+        }
+        $model->somme=$sum;
         return response()->json($model);
     }
 
