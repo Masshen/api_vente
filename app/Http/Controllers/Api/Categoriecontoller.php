@@ -30,8 +30,8 @@ class Categoriecontoller extends Controller
     public function store(Request $request) //avec post
     {
         $validataire= Validator::make($request->all(),[
-           'name'=>'required',
-           'logo'=>'required|image'//s'assurer que logo soit une image
+            'name'=>'required',
+            'logo'=>'required|image'//s'assurer que logo soit une image
         ]);
         if($validataire->fails()){
             return response()->json($validataire->getMessageBag(),422);

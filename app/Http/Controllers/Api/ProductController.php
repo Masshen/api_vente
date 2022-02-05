@@ -37,7 +37,7 @@ class ProductController extends Controller
             'price'=>'required|numeric',
             'device'=>[Rule::in(['$','Fc'])]
         ]);
-           if($validation->fails()){
+            if($validation->fails()){
             return response()->json($validation->getMessageBag(),422);// fails verifier s'il ya echec
         }
         $model = new product();
