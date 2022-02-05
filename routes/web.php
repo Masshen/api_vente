@@ -14,5 +14,29 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $name="jacques TTT";
+    $ages=5;
+    $articles=array(
+        array(
+            "title"=>"fddffd",
+            "description"=>"gfffdfdf jfdgjfkdjkfd",
+            "icon"=>"thumb-up"
+        ),
+        array(
+            "title"=>"",
+            "description"=>"",
+            "icon"=>"cup"
+        ),
+        array(
+            "title"=>"",
+            "description"=>"",
+            "icon"=>"wallet"
+        ),
+        array(
+            "title"=>"",
+            "description"=>"",
+            "icon"=>"dashboard"
+        )
+    );
+    return view('home',compact('name','ages','articles'));
 });
