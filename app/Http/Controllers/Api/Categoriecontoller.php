@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -18,6 +19,12 @@ class Categoriecontoller extends Controller
     public function index()//avec get
     {
         $list=Category::all();
+        foreach ($list as $item) {
+            //traitement dans chaque item
+            $products=$item->products;
+            $item->count=$products->count();//nombre d'item dans une collection
+            $item->makeHidden(['products']);
+        }
         return response()->json($list);
     }
 
@@ -66,6 +73,9 @@ class Categoriecontoller extends Controller
         if($model==null){
             return response()->json(["L'id ne correspond à aucune information"],404);// fails verifier s'il ya echec
         }
+        $products=$model->products;
+        $model->count=$products->count();//nombre d'item dans une collection
+        $model->makeHidden(['products']);//cacher cet attribut
         return response()->json($model);
     }
 
